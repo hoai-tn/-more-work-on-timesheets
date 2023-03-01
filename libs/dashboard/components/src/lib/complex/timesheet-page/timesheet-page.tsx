@@ -26,22 +26,31 @@ import {
 
 import TabPanel from "../tabbed-display/tabbed-display";
 
-import { initTransport, Transporter } from "@cupola/transporter";
+import {
+  initMockTransport,
+  initTransport,
+  Transporter,
+} from "@cupola/transporter";
 import { useGlobalAppContext } from "../context/context";
 
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+
 import {
-  DataGrid,
+  DataGridPro,
+  GridColumns,
+  GridFilterModel,
+  GridLinkOperator,
+  GridRowsProp,
+  DataGridProProps,
+  GridValueGetterParams,
+  GridRenderCellParams,
   GridCellEditCommitParams,
   GridCellParams,
-  GridColDef,
-  GridRenderCellParams,
-  GridValueGetterParams,
-} from "@mui/x-data-grid";
+} from "@mui/x-data-grid-pro";
 
-import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { DateTime } from "luxon";
 import { ProjectEntity, TimesheetEntryEntity } from "@cupola/types";
@@ -88,18 +97,20 @@ const getDayName = (dateStr: string) => {
     weekday: "long",
   });
 };
-
+const getTreeDataPath: DataGridProProps["getTreeDataPath"] = (row) =>
+  row.hierarchy;
 export const TimesheetsPage = ({
   onChangeTimesheetEntries,
 }: ITimesheetsPage) => {
   const state = useGlobalAppContext();
   const [apiTransport] = useState<Transporter>(
-    initTransport(() => state.apiHost || "")
+    // initTransport(() => state.apiHost || "")
+    initMockTransport()
   );
 
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [timesheets, setTimesheets] = useState<ITimesheet[]>([]);
-  const [columns, setColumns] = useState<GridColDef[]>([]);
+  const [columns, setColumns] = useState<GridColumns>([]);
   const [selectWeekOf, setSelectWeekOf] = useState<DateTime>(
     DateTime.local().setLocale("en-US").startOf("week")
   );
@@ -122,7 +133,7 @@ export const TimesheetsPage = ({
 
   // set columns
   useEffect(() => {
-    const generalTaskWeek: GridColDef[] = days.map((day, indexDay) => ({
+    const generalTaskWeek: GridColumns = days.map((day, indexDay) => ({
       field: day,
       headerName: `${day} (${datesByDay[days[indexDay]].toFormat("MM/dd")})`,
       type: "number",
@@ -134,33 +145,27 @@ export const TimesheetsPage = ({
         return `${params.value?.hours || 0}`;
       },
       renderCell: (params: GridRenderCellParams) => {
-        return (
-          <LightTooltip
-            title={params.row[params.field]?.notes}
-            arrow
-            placement="top-start"
-          >
-            <Typography>
-              {params.row[params.field]?.hours || 0} hours
-            </Typography>
+        const row = params.row[params.field];
+        return row?.date || row?.hours ? (
+          <LightTooltip title={row?.notes} arrow placement="top-start">
+            <Typography>{row?.hours || 0} hours</Typography>
           </LightTooltip>
+        ) : (
+          ""
         );
       },
     }));
     setColumns([
-      {
-        field: "PhaseName",
-        headerName: "Project Name",
-        flex: 1,
-        editable: false,
-        sortable: false,
-      },
       ...generalTaskWeek,
       {
         field: "TotalHours",
         headerName: "Total",
         renderCell: (params: GridRenderCellParams) => {
-          return <Typography>{params.value} hours</Typography>;
+          return params.value ? (
+            <Typography>{params.value} hours</Typography>
+          ) : (
+            ""
+          );
         },
         sortable: false,
         editable: false,
@@ -181,6 +186,8 @@ export const TimesheetsPage = ({
         disableColumnMenu: true,
       },
     ]);
+    console.log(columns);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectWeekOf]);
 
@@ -200,7 +207,6 @@ export const TimesheetsPage = ({
           new Date(startDate),
           new Date(endDate)
         );
-
       const formatDataForGridData: ITimesheet[] = [];
 
       let rowID = 1;
@@ -309,6 +315,7 @@ export const TimesheetsPage = ({
           ""
         )
       );
+
       setTimesheets(formatDataForGridData);
     };
     handleTimesheets().catch(console.error);
@@ -407,6 +414,12 @@ export const TimesheetsPage = ({
   ) => {
     return {
       id,
+      hierarchy:
+        Type === TypeRow.Total
+          ? ["Client", PhaseName]
+          : Type === TypeRow.Project
+          ? ["Client", Project?.name]
+          : ["Client", Project?.name || "", PhaseName],
       PhaseName,
       Monday: hoursByDay["Monday"],
       Tuesday: hoursByDay["Tuesday"],
@@ -465,7 +478,6 @@ export const TimesheetsPage = ({
             phase
           );
 
-        console.log(response);
         // update timesheets state from update notes api
         setTimesheets((prevState) => {
           return prevState.map((row) => {
@@ -548,7 +560,9 @@ export const TimesheetsPage = ({
                         ...params.InputProps,
                         disableUnderline: true,
                       }}
-                      sx={(theme) => ({
+                      sx={(theme: {
+                        palette: { text: { primary: string } };
+                      }) => ({
                         label: {
                           color: theme.palette.text.primary,
                           marginTop: 1,
@@ -606,11 +620,13 @@ export const TimesheetsPage = ({
                 totalHoursWorked={totalHourWorked || 0}
                 hoursAvailable={40}
               />
-              <DataGrid
+              <DataGridPro
                 rows={timesheets}
                 columns={columns}
                 disableColumnMenu={false}
                 disableVirtualization
+                treeData
+                getTreeDataPath={getTreeDataPath}
                 hideFooter
                 autoHeight
                 onCellEditCommit={handleCellEditCommit}

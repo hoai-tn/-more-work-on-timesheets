@@ -59,6 +59,7 @@
     "@mui/lab": "^5.0.0-alpha.104",
     "@mui/material": "^5.10.12",
     "@mui/x-data-grid": "^5.17.8",
+    "@mui/x-data-grid-pro": "^5.17.25",
     "@mui/x-date-pickers": "^5.0.8",
     "@nestjs/common": "9.1.6",
     "@nestjs/config": "^2.2.0",
