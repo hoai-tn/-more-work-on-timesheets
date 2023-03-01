@@ -1,3 +1,4 @@
+import { getAllProjects } from './mocks/projects';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CupolaTransporter, Transporter } from "./cupola-transporter";
 import { APIRoutes, apiRoutes } from "./routes";
@@ -30,9 +31,7 @@ export class MockCupolaTransport implements CupolaTransporter {
   apiRoutes: APIRoutes = apiRoutes;
 
   project = {
-    getAll: async (filter?: Partial<ProjectEntity>): Promise<AxiosResponse> => {
-      throw new Error("not implemented");
-    },
+    getAll: async (filter?: Partial<ProjectEntity>): Promise<AxiosResponse> => getAllProjects(),
   };
 
   role = {

@@ -109,6 +109,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@mui/types": "^7.2.3",
     "@nestjs/schematics": "^9.0.2",
     "@nestjs/testing": "^9.1.2",
     "@nrwl/cli": "15.0.1",
