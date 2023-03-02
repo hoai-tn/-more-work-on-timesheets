@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 import {
   ITimeEntry,
   ITimesheet,
@@ -166,4 +167,12 @@ const calculateHours = (
   }
 
   return hours.hours + hours.minutes / 60;
+};
+
+export const filterTimesheet = (timesheets: ITimesheet[]) =>
+  timesheets.filter((e) => !e.IsDisable);
+  
+export const shouldDisableDate = (date: Dayjs) => {
+  // disable all days except Mondays
+  return date.day() !== 1;
 };

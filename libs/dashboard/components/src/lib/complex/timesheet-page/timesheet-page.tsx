@@ -56,6 +56,8 @@ import { DateTime } from "luxon";
 import { ProjectEntity, TimesheetEntryEntity } from "@cupola/types";
 import CupolaThemeProvider from "../../cupola-theme-provider/cupola-theme-provider";
 import { projectIsActiveWithPhases } from "../../pages/all-projects-page/all-projects-page";
+import { Dayjs } from "dayjs";
+import { filterTimesheet, shouldDisableDate } from "./timesheet-page.functions";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -115,6 +117,7 @@ export const TimesheetsPage = ({
     DateTime.local().setLocale("en-US").startOf("week")
   );
   const [openNoteDialog, setOpenNoteDialog] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState<string>("");
 
   const datesByDay = new DatesByDay();
 
@@ -186,8 +189,6 @@ export const TimesheetsPage = ({
         disableColumnMenu: true,
       },
     ]);
-    console.log(columns);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectWeekOf]);
 
@@ -322,6 +323,26 @@ export const TimesheetsPage = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectWeekOf, projects]);
 
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (searchText === "") {
+        setTimesheets((prevState) =>
+          prevState.map((e) => ({ ...e, IsDisable: false }))
+        );
+      } else {
+        setTimesheets((prevState) =>
+          prevState.map((e) => {
+            if (e.PhaseName !== searchText && e.Project?.name !== searchText) {
+              return { ...e, IsDisable: true };
+            }
+            return { ...e, IsDisable: false };
+          })
+        );
+      }
+    }, 100);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchText]);
+
   const handleCellEditCommit = useCallback(
     async ({ id, field, value }: GridCellEditCommitParams) => {
       if (typeof value !== "object") {
@@ -397,6 +418,7 @@ export const TimesheetsPage = ({
     [timesheets]
   );
 
+
   const totalHours = (totalHoursByDay: { [index: string]: ITimeEntry }) => {
     return (Object.keys(totalHoursByDay).length &&
       Object.values(totalHoursByDay)
@@ -432,6 +454,7 @@ export const TimesheetsPage = ({
       Type,
       PhaseOfProject,
       Project,
+      IsDisable: false,
     } as ITimesheet;
   };
   // update onChangeData to testing
@@ -575,10 +598,33 @@ export const TimesheetsPage = ({
                     />
                   )}
                   InputAdornmentProps={{ position: "start" }}
+                  shouldDisableDate={shouldDisableDate}
                   data-testid={"select-week-picker"}
                 />
               </LocalizationProvider>
             </CupolaThemeProvider>
+            <Box
+              sx={{
+                width: 500,
+                maxWidth: "100%",
+                marginLeft: 20,
+              }}
+            >
+              <TextField
+                id="search-field"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                fullWidth
+                variant="standard"
+                margin="normal"
+                InputProps={{
+                  disableUnderline: true,
+                  style: { color: "black", backgroundColor: "white" },
+                  placeholder: "Search",
+                }}
+                InputLabelProps={{ shrink: false }}
+              />
+            </Box>
           </Box>
           <Accordion
             defaultExpanded
@@ -621,7 +667,7 @@ export const TimesheetsPage = ({
                 hoursAvailable={40}
               />
               <DataGridPro
-                rows={timesheets}
+                rows={filterTimesheet(timesheets)}
                 columns={columns}
                 disableColumnMenu={false}
                 disableVirtualization
@@ -658,7 +704,7 @@ export const TimesheetsPage = ({
                   },
                   {
                     "& .MuiDataGrid-columnHeaders": {
-                      background: "#f7ece2",
+                      background: "#dcdcdc",
                       outline: "none",
                       fontSize: 16,
                       borderBottom: "1px solid #d3d3d3",

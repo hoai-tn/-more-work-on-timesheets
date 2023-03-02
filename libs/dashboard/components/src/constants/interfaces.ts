@@ -132,6 +132,6 @@ export interface ITimesheet {
   Sunday: ITimeEntry;
   Type: TypeRow;
   PhaseOfProject: string;
-
   Project?: ProjectEntity;
+  IsDisable: boolean;
 }
