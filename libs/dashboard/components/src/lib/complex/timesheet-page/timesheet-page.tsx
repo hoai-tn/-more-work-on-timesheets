@@ -330,13 +330,14 @@ export const TimesheetsPage = ({
           prevState.map((e) => ({ ...e, IsDisable: false }))
         );
       } else {
+        const searchPattern = new RegExp(searchText, "gi");
         setTimesheets((prevState) =>
-          prevState.map((e) => {
-            if (e.PhaseName !== searchText && e.Project?.name !== searchText) {
-              return { ...e, IsDisable: true };
-            }
-            return { ...e, IsDisable: false };
-          })
+          prevState.map((e) =>
+            searchPattern.test(e.PhaseName) ||
+            searchPattern.test(e.Project?.name || "")
+              ? { ...e, IsDisable: false }
+              : { ...e, IsDisable: true }
+          )
         );
       }
     }, 100);
@@ -417,7 +418,6 @@ export const TimesheetsPage = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [timesheets]
   );
-
 
   const totalHours = (totalHoursByDay: { [index: string]: ITimeEntry }) => {
     return (Object.keys(totalHoursByDay).length &&
