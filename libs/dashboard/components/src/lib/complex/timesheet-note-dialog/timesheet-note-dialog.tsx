@@ -78,11 +78,11 @@ export const TimesheetNoteDialog = ({
 
       projects?.forEach((project: ProjectEntity) => {
         phases.set(
-          project.projectId,
+          project.id,
           project.derivedFeeTemplate?.templates || []
         );
       });
-
+      
       await setProjectPhasesMap(phases);
     })();
   }, [projects, setProjectPhasesMap]);
@@ -140,11 +140,15 @@ export const TimesheetNoteDialog = ({
           <ThemeProvider theme={theme}>
             <Autocomplete
               data-testid={"select-project"}
-              options={(projects || []).map((project: ProjectEntity) => ({
-                label: project.name,
-                value: project.id,
-              }))}
+              options={(projects || []).map((project: ProjectEntity) => {
+               return ({
+                  label: project.name,
+                  value: project.id,
+                })
+              })}
               onChange={async (e, value) => {
+                console.log({value});
+                
                 if (value === null) {
                   return;
                 }
@@ -160,6 +164,8 @@ export const TimesheetNoteDialog = ({
                 handleChangeInput("project", String(id));
 
                 const phases = projectPhasesMap?.get(id) || [];
+                console.log({phases});
+                
                 await setProjectPhases(phases);
               }}
               sx={{
@@ -182,7 +188,11 @@ export const TimesheetNoteDialog = ({
             <Autocomplete
               data-testid={"select-phase"}
               options={projectPhases.map(
-                (template: DerivedProjectFeeTemplate) => template.phase
+                (template: DerivedProjectFeeTemplate) => {
+                  console.log({template});
+                  
+                  return template.phase
+                }
               )}
               onChange={(e, value) =>
                 handleChangeInput("phase", String(value === null ? "" : value))

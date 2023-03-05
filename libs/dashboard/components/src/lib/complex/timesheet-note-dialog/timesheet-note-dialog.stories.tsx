@@ -38,7 +38,7 @@ Primary.args = {
   title: "Add a Note",
   projects: [
     {
-      projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689",
+      id: "553f8fab-ec03-47ef-9000-9ac05cd1a689",
       name: "Project1",
       derivedFeeTemplate: {
         totalProjectTimeAmount: 5000,
@@ -100,7 +100,7 @@ Primary.args = {
       },
     },
     {
-      projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+      id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
       name: "Project2",
       derivedFeeTemplate: {
         totalProjectTimeAmount: 5000,
