@@ -4,6 +4,7 @@ export * from "./lib/architect/entities/fake.architect";
 export * from "./lib/auth/dto/a-login.dto";
 
 export * from "./lib/client/entities/fake.client";
+export * from "./lib/client/entities/client.entity";
 
 export * from "./lib/project/entities/project.entity";
 export * from "./lib/project/entities/fake.project";
