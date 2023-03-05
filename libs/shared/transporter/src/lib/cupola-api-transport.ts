@@ -24,7 +24,13 @@ export class CupolaAPITransport implements CupolaTransporter {
       });
     }
   };
-
+  client = {
+    getAll: async (filter?: Partial<ClientTypes>): Promise<AxiosResponse> => {
+      return this.http.get(`${this.host}/${this.apiRoutes.clients.getAll}`, {
+        params: filter,
+      });
+    }
+  };
   timesheet = {
     get: (
       startDate: Date,

@@ -1,3 +1,4 @@
+import { ProjectEntity } from "@cupola/types";
 import { AxiosResponse } from "axios";
 export const getAllProjects = async (
   filter?: Partial<ProjectEntity>
@@ -6,8 +7,9 @@ export const getAllProjects = async (
     resolve({
       data: [
         {
-          projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689",
+          id: "553f8fab-ec03-47ef-9000-9ac05cd1a689",
           name: "Project1",
+          clientId: "1",
           derivedFeeTemplate: {
             totalProjectTimeAmount: 5000,
             templates: [
@@ -68,8 +70,9 @@ export const getAllProjects = async (
           },
         },
         {
-          projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+          id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           name: "Project2",
+          clientId: "1",
           derivedFeeTemplate: {
             totalProjectTimeAmount: 5000,
             templates: [

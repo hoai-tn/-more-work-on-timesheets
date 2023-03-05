@@ -15,7 +15,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Overhead",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-20",
@@ -23,7 +23,7 @@ export const timesheetsGet = (
           minutes: 30,
           notes: "",
           phase: "Overhead",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-21",
@@ -31,7 +31,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Overhead",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-22",
@@ -39,7 +39,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Overhead",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-23",
@@ -47,7 +47,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Overhead",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-24",
@@ -55,7 +55,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Overhead",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-25",
@@ -63,7 +63,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Overhead",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-19",
@@ -71,7 +71,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Pre Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-20",
@@ -79,7 +79,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Pre Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-21",
@@ -87,7 +87,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Pre Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-22",
@@ -95,7 +95,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Pre Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-23",
@@ -103,7 +103,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Pre Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-24",
@@ -111,7 +111,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Pre Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-25",
@@ -119,7 +119,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Pre Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-19",
@@ -127,7 +127,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Schematic Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-20",
@@ -135,7 +135,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Schematic Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-21",
@@ -143,7 +143,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Schematic Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-22",
@@ -151,7 +151,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Schematic Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-23",
@@ -159,7 +159,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Schematic Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-24",
@@ -167,7 +167,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Schematic Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-25",
@@ -175,7 +175,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Schematic Design",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-19",
@@ -183,7 +183,7 @@ export const timesheetsGet = (
           minutes: 30,
           notes: "",
           phase: "Add a Phase",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-20",
@@ -191,7 +191,7 @@ export const timesheetsGet = (
           minutes: 30,
           notes: "",
           phase: "Add a Phase",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-21",
@@ -199,7 +199,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Add a Phase",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-22",
@@ -207,7 +207,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Add a Phase",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-23",
@@ -215,7 +215,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Add a Phase",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-24",
@@ -223,7 +223,7 @@ export const timesheetsGet = (
           minutes: 30,
           notes: "",
           phase: "Add a Phase",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-25",
@@ -231,7 +231,7 @@ export const timesheetsGet = (
           minutes: 0,
           notes: "",
           phase: "Add a Phase",
-          project: { projectId: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
+          project: { id: "553f8fab-ec03-47ef-9000-9ac05cd1a689" },
         },
         {
           date: "2022-12-19",
@@ -240,7 +240,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Overhead",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -250,7 +250,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Overhead",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -260,7 +260,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Overhead",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -270,7 +270,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Overhead",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -280,7 +280,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Overhead",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -290,7 +290,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Overhead",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -300,7 +300,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Overhead",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -310,7 +310,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Pre Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -320,7 +320,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Pre Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -330,7 +330,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Pre Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -340,7 +340,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Pre Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -350,7 +350,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Pre Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -360,7 +360,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Pre Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -370,7 +370,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Pre Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -380,7 +380,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Schematic Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -390,7 +390,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Schematic Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -400,7 +400,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Schematic Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -410,7 +410,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Schematic Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -420,7 +420,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Schematic Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -430,7 +430,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Schematic Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
         {
@@ -440,7 +440,7 @@ export const timesheetsGet = (
           notes: "",
           phase: "Schematic Design",
           project: {
-            projectId: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+            id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
           },
         },
       ],
@@ -460,17 +460,17 @@ export const timesheetPost = (
   minutes: number,
   notes: string,
   phase: string,
-  projectId: string
+  id: string
 ): Promise<AxiosResponse> => {
   return new Promise<AxiosResponse>((resolve) =>
     resolve({
       data: {
-        date: date,
-        hours: hours,
-        minutes: minutes,
-        notes: notes,
-        phase: phase,
-        projectId: projectId,
+        date,
+        hours,
+        minutes,
+        notes,
+        phase,
+        id,
       },
       status: 201,
       statusText: "OK",

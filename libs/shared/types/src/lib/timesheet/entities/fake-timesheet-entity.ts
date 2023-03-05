@@ -5,7 +5,7 @@ import { v4 as UUIDv4 } from "uuid";
 import { fakeArchitect } from "../../architect/entities/fake.architect";
 
 export const fakeTimesheetEntity = (
-  project = fakeProject(),
+  project = fakeProject("Project1"),
   architect = fakeArchitect()
 ): TimesheetEntryEntity => {
   return {

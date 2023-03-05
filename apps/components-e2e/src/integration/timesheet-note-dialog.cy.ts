@@ -41,7 +41,7 @@ describe("Timesheet note dialog", () => {
       .invoke("val")
       .should((dump) => {
         expect(dump).to.equal(
-          '{"date":"2023-01-01","project":"Project1","phase":"Overhead","notes":"notes test"}'
+          '{"date":"2023-01-01","project":"553f8fab-ec03-47ef-9000-9ac05cd1a689","phase":"Overhead","notes":"notes test"}'
         );
       });
   });

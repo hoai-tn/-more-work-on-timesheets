@@ -77,7 +77,10 @@ export const TimesheetNoteDialog = ({
       >();
 
       projects?.forEach((project: ProjectEntity) => {
-        phases.set(project.id, project.derivedFeeTemplate?.templates || []);
+        phases.set(
+          project.projectId,
+          project.derivedFeeTemplate?.templates || []
+        );
       });
 
       await setProjectPhasesMap(phases);

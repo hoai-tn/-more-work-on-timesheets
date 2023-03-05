@@ -8,6 +8,7 @@ import {
 } from "@cupola/types";
 import { AxiosInstance, AxiosResponse } from "axios";
 import { timesheetPost, timesheetsGet } from "./mocks";
+import { getAllClients } from './mocks/clients';
 
 export class MockCupolaTransport implements CupolaTransporter {
   timesheet = {
@@ -32,8 +33,10 @@ export class MockCupolaTransport implements CupolaTransporter {
 
   project = {
     getAll: async (filter?: Partial<ProjectEntity>): Promise<AxiosResponse> => getAllProjects(),
-  };
-
+  }
+  client = {
+    getAll: async (): Promise<AxiosResponse> => getAllClients(),
+  }
   role = {
     getAll: (): Promise<AxiosResponse> => {
       throw new Error("not implemented");

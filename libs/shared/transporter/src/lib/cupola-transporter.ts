@@ -1,6 +1,7 @@
 import { AxiosInstance, AxiosResponse } from "axios";
 import {
   ProjectEntity,
+  ClientEntity,
   TimesheetEntryEntity,
 } from "@cupola/types";
 import { APIRoutes } from "./routes";
@@ -17,7 +18,9 @@ export interface CupolaTransporter {
   project: {
     getAll: (filter?: Partial<ProjectEntity>) => Promise<AxiosResponse>;
   };
-
+  client: {
+    getAll: () => Promise<AxiosResponse>;
+  };
   timesheet: {
     get: (
       startDate: Date,

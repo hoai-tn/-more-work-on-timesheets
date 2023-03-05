@@ -38,6 +38,8 @@ export class ProjectEntity extends EntityMeta {
   @Column()
   projectId!: string;
 
+  @Column()
+  clientId!: string;
   /**
    * Project contract is a way of defining how the project will be funded.
    *

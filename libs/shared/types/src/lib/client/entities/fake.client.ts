@@ -12,7 +12,7 @@ import { fakeAddress } from "../../common/fake-simple-values";
 export const fakeClient = (): ClientEntity => {
   const client = new ClientEntity();
   client.id = UUIDv4();
-  client.name = "Test Client";
+  client.name = "Client";
   client.address = fakeAddress();
   client.phone = faker.phone.number("###-###-###");
   client.createdAt = new Date();
