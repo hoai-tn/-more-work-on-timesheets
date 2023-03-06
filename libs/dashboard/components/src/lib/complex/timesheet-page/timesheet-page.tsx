@@ -162,7 +162,7 @@ export const TimesheetsPage = ({
       },
       renderCell: (params: GridRenderCellParams) => {
         const row = params.row[params.field];
-        return row?.date || row?.hours ? (
+        return row ? (
           <LightTooltip title={row?.notes} arrow placement="top-start">
             <Typography>{row?.hours || 0} hours</Typography>
           </LightTooltip>
@@ -178,7 +178,7 @@ export const TimesheetsPage = ({
         headerName: "Total",
         renderCell: (params: GridRenderCellParams) => {
           return params.value ? (
-            <Typography>{params.value} hours</Typography>
+            <Typography>{params?.value || 0} hours</Typography>
           ) : (
             ""
           );
@@ -303,6 +303,7 @@ export const TimesheetsPage = ({
               );
               rowID++;
             });
+
           }
         });
         //3. Total Projects work hours
@@ -312,7 +313,8 @@ export const TimesheetsPage = ({
         days.forEach((day, index) => {
           let totalHours = 0;
           formatDataForGridData.forEach((item) => {
-            if (item.Type === TypeRow.Project)
+            
+            if (item.Project?.clientId === client.id && item.Type === TypeRow.Project)
               totalHours += Number(
                 // total hours by project
                 (item[day as keyof ITimesheet] as ITimeEntry).hours
@@ -326,7 +328,7 @@ export const TimesheetsPage = ({
           };
           totalAllOfProject += totalHours;
         });
-
+        
         formatDataForGridData.push(
           renderRow(
             rowID,
@@ -339,6 +341,7 @@ export const TimesheetsPage = ({
             client.name,
           )
         );
+        rowID++;
       });
 
       setTimesheets(formatDataForGridData);
