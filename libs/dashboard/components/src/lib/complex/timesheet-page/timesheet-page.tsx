@@ -7,6 +7,9 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  Button,
+  ButtonProps,
+  IconButton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -819,21 +822,24 @@ function CustomGridTreeDataGroupingCell(props: GridRenderCellParams) {
   return (
     <Box sx={{ ml: rowNode.depth * 4, width: "100%" }}>
       <div
-        onClick={handleClick}
         tabIndex={-1}
         style={{
-          width:"80%",
+          width: "80%",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
         {filteredDescendantCount > 0 && rowNode.childrenExpanded ? (
-          <KeyboardArrowDownIcon />
+          <IconButton onClick={handleClick}>
+            <KeyboardArrowDownIcon />
+          </IconButton>
         ) : rowNode.childrenExpanded === undefined ? (
           ""
         ) : (
-          <KeyboardArrowRightIcon />
+          <IconButton onClick={handleClick}>
+            <KeyboardArrowRightIcon />
+          </IconButton>
         )}
         <span>{value}</span>
       </div>
