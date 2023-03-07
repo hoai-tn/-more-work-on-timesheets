@@ -13,6 +13,8 @@ import {
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DateRangeIcon from "@mui/icons-material/DateRange";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { TimesheetHoursWorked } from "../timesheet-hours-worked/timesheet-hours-worked";
 import { TimesheetNoteDialog } from "../timesheet-note-dialog/timesheet-note-dialog";
 
@@ -48,6 +50,9 @@ import {
   GridRenderCellParams,
   GridCellEditCommitParams,
   GridCellParams,
+  useGridApiContext,
+  gridFilteredDescendantCountLookupSelector,
+  useGridSelector,
 } from "@mui/x-data-grid-pro";
 import AddIcon from "@mui/icons-material/Add";
 
@@ -695,10 +700,10 @@ export const TimesheetsPage = ({
               <DataGridPro
                 rows={filterTimesheet(timesheets)}
                 columns={columns}
-                disableColumnMenu={false}
-                disableVirtualization
                 treeData
                 getTreeDataPath={getTreeDataPath}
+                disableColumnMenu={false}
+                disableVirtualization
                 hideFooter
                 autoHeight
                 onCellEditCommit={handleCellEditCommit}
@@ -718,6 +723,7 @@ export const TimesheetsPage = ({
                     tabIndex: 0,
                   },
                 }}
+                groupingColDef={groupingColDef}
                 sx={[
                   {
                     "& .super-app-theme--cell": {
@@ -788,3 +794,49 @@ export const TimesheetsPage = ({
     </Box>
   );
 };
+const groupingColDef: DataGridProProps["groupingColDef"] = {
+  headerName: "Group",
+  renderCell: (params) => {
+    return <CustomGridTreeDataGroupingCell {...params} />;
+  },
+};
+
+function CustomGridTreeDataGroupingCell(props: GridRenderCellParams) {
+  const { id, field, rowNode, value } = props;
+  const apiRef = useGridApiContext();
+  const filteredDescendantCountLookup = useGridSelector(
+    apiRef,
+    gridFilteredDescendantCountLookupSelector
+  );
+  const filteredDescendantCount =
+    filteredDescendantCountLookup[rowNode.id] ?? 0;
+
+  const handleClick = (event: { stopPropagation: () => void }) => {
+    apiRef.current.setRowChildrenExpansion(id, !rowNode.childrenExpanded);
+    apiRef.current.setCellFocus(id, field);
+    event.stopPropagation();
+  };
+  return (
+    <Box sx={{ ml: rowNode.depth * 4, width: "100%" }}>
+      <div
+        onClick={handleClick}
+        tabIndex={-1}
+        style={{
+          width:"80%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        {filteredDescendantCount > 0 && rowNode.childrenExpanded ? (
+          <KeyboardArrowDownIcon />
+        ) : rowNode.childrenExpanded === undefined ? (
+          ""
+        ) : (
+          <KeyboardArrowRightIcon />
+        )}
+        <span>{value}</span>
+      </div>
+    </Box>
+  );
+}
