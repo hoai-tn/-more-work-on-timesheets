@@ -11,10 +11,16 @@ export class TimesheetEntryEntity extends EntityMeta {
   date!: Date;
 
   @Column("int", { default: 0 })
-  hours!: number;
+  billable_hours!: number;
 
   @Column("int", { default: 0 })
-  minutes!: number;
+  billable_minutes!: number;
+  
+  @Column("int", { default: 0 })
+  non_billable_hours!: number;
+
+  @Column("int", { default: 0 })
+  non_billable_minutes!: number;
 
   @Column("text", { default: "" })
   notes!: string;

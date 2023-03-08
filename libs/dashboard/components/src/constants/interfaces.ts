@@ -117,6 +117,8 @@ export enum TypeRow {
   Project,
   Phase,
   Total,
+  Billable,
+  NoneBillable,
 }
 
 export interface ITimesheet {
@@ -131,7 +133,7 @@ export interface ITimesheet {
   Saturday: ITimeEntry;
   Sunday: ITimeEntry;
   Type: TypeRow;
-  PhaseOfProject: string;
   Project?: ProjectEntity;
   IsDisable: boolean;
+  hierarchy: string[];
 }

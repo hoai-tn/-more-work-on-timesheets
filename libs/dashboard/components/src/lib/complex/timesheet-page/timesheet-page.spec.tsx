@@ -574,9 +574,11 @@ describe("Timesheets Page", () => {
   });
 
   it("should submit note dialog", async () => {
-    const { baseElement } = render(
+    const { baseElement } = await render(
       <TimesheetsPage
         onChangeTimesheetEntries={(e: string) => {
+          console.log(e);
+
           updateTimesheetMock(e);
         }}
       />
@@ -609,20 +611,16 @@ describe("Timesheets Page", () => {
       });
 
     fireEvent.click(screen.getByText("OK"));
+
+    const chooseProject = baseElement.querySelector(
+      '.MuiAutocomplete-popper li[data-option-index="0"]'
+    );
     // select project
     selectProject &&
       fireEvent.change(selectProject, {
         target: { value: "Project1" },
       });
-    console.log({ selectProject });
-
-    const chooseProject = baseElement.querySelector(
-      '.MuiAutocomplete-popper li[data-option-index="0"]'
-    );
-    console.log({ chooseProject });
-
     chooseProject && fireEvent.click(chooseProject);
-
     // select phase
     selectPhase &&
       fireEvent.change(selectPhase, {
@@ -633,7 +631,6 @@ describe("Timesheets Page", () => {
     );
     choosePhase && fireEvent.click(choosePhase);
     console.log({ choosePhase });
-
     // input note
     note &&
       fireEvent.change(note, {

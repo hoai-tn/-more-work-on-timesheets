@@ -11,8 +11,10 @@ export const fakeTimesheetEntity = (
   return {
     id: UUIDv4(),
     date: new Date(),
-    hours: 1,
-    minutes: 10,
+    billable_hours: 1,
+    billable_minutes: 0,
+    non_billable_hours: 0,
+    non_billable_minutes: 0,
     notes: "ddddFake notes",
     phase: ProjectAndTaskPhase.DESIGN,
     project: project,

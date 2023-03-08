@@ -112,8 +112,10 @@ const getDayName = (dateStr: string) => {
     weekday: "long",
   });
 };
+
 const getTreeDataPath: DataGridProProps["getTreeDataPath"] = (row) =>
   row.hierarchy;
+
 export const TimesheetsPage = ({
   onChangeTimesheetEntries,
 }: ITimesheetsPage) => {
@@ -231,7 +233,7 @@ export const TimesheetsPage = ({
           new Date(startDate),
           new Date(endDate)
         );
-        
+
       const formatDataForGridData: ITimesheet[] = [];
 
       let rowID = 1;
@@ -257,7 +259,12 @@ export const TimesheetsPage = ({
                   DateTime.fromISO(entry.date.toString()).weekdayLong === day
               );
               const reduceHours = timeEntriesByDay
-                .map((e: TimesheetEntryEntity) => e.hours + e.minutes / 60) // total hours and minutes
+                .map(
+                  (e: TimesheetEntryEntity) =>
+                    e.billable_hours +
+                    e.billable_minutes / 60 +
+                    (e.non_billable_hours + e.non_billable_minutes / 60)
+                ) // total hours and minutes
                 .reduce((a: number, b: number) => a + b, 0); // total hours by phase
               totalHoursByDay[days[dayIndex]] = {
                 date: "",
@@ -267,16 +274,15 @@ export const TimesheetsPage = ({
               };
             });
             formatDataForGridData.push(
-              renderRow(
-                rowID,
-                project.name,
-                totalHoursByDay,
-                totalHours(totalHoursByDay),
-                TypeRow.Project,
-                "",
+              renderRow({
+                id: rowID,
+                phaseName: project.name,
+                hoursByDay: totalHoursByDay,
+                totalHours: totalHours(totalHoursByDay),
+                type: TypeRow.Project,
                 project,
-                client.name,
-              )
+                clientName: client.name,
+              })
             );
 
             rowID++;
@@ -284,6 +290,9 @@ export const TimesheetsPage = ({
             //2. Handle `phases` and Add phase row to `formatDataForGridData`
             phases?.forEach((phase) => {
               const phaseByDay: { [index: string]: ITimeEntry } = {};
+              const billableByDay: { [index: string]: ITimeEntry } = {};
+              const noneBillableByDay: { [index: string]: ITimeEntry } = {};
+
               const timeEntryByPhase = timeEntries.filter(
                 (timeEntry: TimesheetEntryEntity) => timeEntry.phase === phase
               );
@@ -293,25 +302,77 @@ export const TimesheetsPage = ({
                   {
                     date: item.date.toString(),
                     notes: item.notes,
-                    hours: item.hours + item.minutes / 60,
+                    hours:
+                      item.billable_hours +
+                      item.billable_minutes / 60 +
+                      (item.non_billable_hours +
+                        item.non_billable_minutes / 60),
                     minutes: 0,
                   };
               });
               formatDataForGridData.push(
-                renderRow(
-                  rowID,
-                  phase as string,
-                  phaseByDay,
-                  totalHours(phaseByDay),
-                  TypeRow.Phase,
-                  project.name,
+                renderRow({
+                  id: rowID,
+                  phaseName: phase as string,
+                  hoursByDay: phaseByDay,
+                  totalHours: totalHours(phaseByDay),
+                  type: TypeRow.Phase,
                   project,
-                  client.name,
-                )
+                  clientName: client.name,
+                })
+              );
+              rowID++;
+
+              timeEntryByPhase.forEach((item: TimesheetEntryEntity) => {
+                billableByDay[
+                  DateTime.fromISO(item.date.toString()).weekdayLong
+                ] = {
+                  date: item.date.toString(),
+                  notes: item.notes,
+                  hours: item.billable_hours + item.billable_minutes / 60,
+                  minutes: 0,
+                };
+              });
+
+              formatDataForGridData.push(
+                renderRow({
+                  id: rowID,
+                  phaseName: phase,
+                  billableName: "Billable",
+                  hoursByDay: billableByDay,
+                  totalHours: totalHours(billableByDay),
+                  type: TypeRow.Billable,
+                  project,
+                  clientName: client.name,
+                })
+              );
+              rowID++;
+
+              timeEntryByPhase.forEach((item: TimesheetEntryEntity) => {
+                noneBillableByDay[
+                  DateTime.fromISO(item.date.toString()).weekdayLong
+                ] = {
+                  date: item.date.toString(),
+                  notes: item.notes,
+                  hours:
+                    item.non_billable_hours + item.non_billable_minutes / 60,
+                  minutes: 0,
+                };
+              });
+              formatDataForGridData.push(
+                renderRow({
+                  id: rowID,
+                  phaseName: phase,
+                  billableName: "Non-billable",
+                  hoursByDay: noneBillableByDay,
+                  totalHours: totalHours(noneBillableByDay),
+                  type: TypeRow.NoneBillable,
+                  project,
+                  clientName: client.name,
+                })
               );
               rowID++;
             });
-
           }
         });
         //3. Total Projects work hours
@@ -321,8 +382,10 @@ export const TimesheetsPage = ({
         days.forEach((day, index) => {
           let totalHours = 0;
           formatDataForGridData.forEach((item) => {
-            
-            if (item.Project?.clientId === client.id && item.Type === TypeRow.Project)
+            if (
+              item.Project?.clientId === client.id &&
+              item.Type === TypeRow.Project
+            )
               totalHours += Number(
                 // total hours by project
                 (item[day as keyof ITimesheet] as ITimeEntry).hours
@@ -336,18 +399,16 @@ export const TimesheetsPage = ({
           };
           totalAllOfProject += totalHours;
         });
-        
+
         formatDataForGridData.push(
-          renderRow(
-            rowID,
-            "Total # Hours",
-            totalHoursByProject,
-            totalAllOfProject,
-            TypeRow.Total,
-            "",
-            null,
-            client.name,
-          )
+          renderRow({
+            id: rowID,
+            phaseName: "Total # Hours",
+            hoursByDay: totalHoursByProject,
+            totalHours: totalAllOfProject,
+            type: TypeRow.Total,
+            clientName: client.name,
+          })
         );
         rowID++;
       });
@@ -396,11 +457,8 @@ export const TimesheetsPage = ({
             minutes: 0,
             notes: "",
           };
-
-          const sumHours =
-            hoursWorked < timeEntry.hours
-              ? hoursWorked - timeEntry.hours
-              : timeEntry.hours + hoursWorked;
+          // Calculate difference between new and old hours
+          const sumHours = hoursWorked - timeEntry.hours;
 
           timeEntry.hours = hoursWorked;
           timeEntry.minutes =
@@ -422,11 +480,13 @@ export const TimesheetsPage = ({
               const entry = {
                 ...(item[field as keyof ITimesheet] as ITimeEntry),
               };
+              const phaseByHierarchy = row?.hierarchy[2] || "";
 
               // Update total hours and hours for matching phase or "Total # Hours"
               if (
-                item.PhaseName === row.PhaseOfProject ||
+                // item.PhaseName === row.Project?.name ||
                 item.PhaseName === "Total # Hours"
+                // (item.PhaseName === phaseByHierarchy)
               ) {
                 return {
                   ...item,
@@ -436,14 +496,51 @@ export const TimesheetsPage = ({
               }
 
               // Update total hours and hours for matching id
+              const getEntryById = item.id === id;
+
               if (item.id === id) {
                 return {
                   ...item,
-                  [field]: { ...entry, hours: sumHours },
+                  [field]: {
+                    ...entry,
+                    hours: hoursWorked,
+                  },
                   TotalHours: row.TotalHours + sumHours,
                 };
               }
 
+              if (
+                item.Project?.id === row.Project?.id &&
+                item.PhaseName === phaseByHierarchy
+              ) {
+                const findRowToTotal = timesheets.find(
+                  (timesheet) =>
+                    timesheet.hierarchy[1] === row.hierarchy[1] &&
+                    timesheet.hierarchy[2] === row.hierarchy[2] &&
+                    timesheet.hierarchy[3] ===
+                      (row.Type === TypeRow.Billable
+                        ? "Non-billable"
+                        : "Billable")
+                );
+                console.log({ row });
+
+                console.log({ findRowToTotal });
+
+                console.log({
+                  phase: item.PhaseName,
+                  hoursWorked,
+                  prevHrs: entry.hours,
+                });
+
+                return {
+                  ...item,
+                  [field]: {
+                    ...entry,
+                    hours: hoursWorked + findRowToTotal[field].hours,
+                  },
+                  TotalHours: item.TotalHours + sumHours,
+                };
+              }
               return item;
             })
           );
@@ -460,25 +557,48 @@ export const TimesheetsPage = ({
         .map((timeEntry) => Number(timeEntry["hours"]))
         .reduce((a, b) => a + b, 0)) as number;
   };
-  const renderRow = (
-    id: number,
-    PhaseName: string,
-    hoursByDay: { [index: string]: ITimeEntry },
-    TotalHours: number,
-    Type: TypeRow,
-    PhaseOfProject: string = "",
-    Project?: ProjectEntity | null,
-    clientName?: string 
-  ) => {
+  const renderRow = (row: {
+    id: number;
+    phaseName: string;
+    hoursByDay: { [index: string]: ITimeEntry };
+    totalHours: number;
+    type: TypeRow;
+    project?: ProjectEntity | null;
+    clientName?: string;
+    billableName?: string;
+  }) => {
+    const {
+      id,
+      phaseName,
+      hoursByDay,
+      totalHours,
+      type,
+      project,
+      clientName,
+      billableName,
+    } = row;
+    let hierarchy;
+    switch (type) {
+      case TypeRow.Total:
+        hierarchy = [clientName, phaseName];
+        break;
+      case TypeRow.Project:
+        hierarchy = [clientName, project?.name];
+        break;
+      case TypeRow.Billable:
+      case TypeRow.NoneBillable:
+        hierarchy = [clientName, project?.name, phaseName, billableName];
+        break;
+      default:
+        hierarchy = [clientName, project?.name || "", phaseName];
+    }
     return {
       id,
-      hierarchy:
-        Type === TypeRow.Total
-          ? [clientName, PhaseName]
-          : Type === TypeRow.Project
-          ? [clientName, Project?.name]
-          : [clientName, Project?.name || "", PhaseName],
-      PhaseName,
+      hierarchy,
+      PhaseName:
+        type === TypeRow.Billable || type === TypeRow.NoneBillable
+          ? billableName
+          : phaseName,
       Monday: hoursByDay["Monday"],
       Tuesday: hoursByDay["Tuesday"],
       Wednesday: hoursByDay["Wednesday"],
@@ -486,10 +606,9 @@ export const TimesheetsPage = ({
       Friday: hoursByDay["Friday"],
       Saturday: hoursByDay["Saturday"],
       Sunday: hoursByDay["Sunday"],
-      TotalHours,
-      Type,
-      PhaseOfProject,
-      Project,
+      TotalHours: totalHours,
+      Type: type,
+      Project: project,
       IsDisable: false,
     } as ITimesheet;
   };
@@ -711,7 +830,8 @@ export const TimesheetsPage = ({
                 autoHeight
                 onCellEditCommit={handleCellEditCommit}
                 isCellEditable={(params: GridCellParams) =>
-                  params.row.Type === TypeRow.Phase
+                  params.row.Type === TypeRow.Billable ||
+                  params.row.Type === TypeRow.NoneBillable
                 }
                 getRowClassName={(params) => {
                   if (
