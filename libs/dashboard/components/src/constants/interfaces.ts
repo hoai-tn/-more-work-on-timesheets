@@ -114,11 +114,12 @@ export interface ITimsheetNoteDialog {
 }
 
 export enum TypeRow {
+  Client,
   Project,
   Phase,
-  Total,
   Billable,
   NoneBillable,
+  Total,
 }
 
 export interface ITimesheet {
