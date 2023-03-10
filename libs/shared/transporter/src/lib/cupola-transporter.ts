@@ -26,13 +26,15 @@ export interface CupolaTransporter {
       startDate: Date,
       endDate: Date
     ) => Promise<AxiosResponse<TimesheetEntryEntity[]>>;
-    post: (
-      date: Date,
-      hoursWorked: number,
-      minsWorked: number,
-      projectId: string,
-      notes: string,
-      phase: string
-    ) => Promise<AxiosResponse<Partial<TimesheetEntryEntity>>>;
+    post: (payload: {
+      date: Date;
+      phaseName: string;
+      billable_hours: number;
+      billable_minutes: number;
+      non_billable_hours: number;
+      non_billable_minutes: number;
+      notes: string;
+      projectId: string;
+    }) => Promise<AxiosResponse<Partial<TimesheetEntryEntity>>>;
   };
 }

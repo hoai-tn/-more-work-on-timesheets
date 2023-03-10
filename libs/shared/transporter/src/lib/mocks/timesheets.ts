@@ -609,23 +609,47 @@ export const timesheetsGet = (
   );
 };
 
-export const timesheetPost = (
-  date: Date,
-  hours: number,
-  minutes: number,
-  notes: string,
-  phase: string,
-  id: string
-): Promise<AxiosResponse> => {
+export const timesheetPost = ({
+  date,
+  phaseName,
+  billable_hours,
+  billable_minutes,
+  non_billable_hours,
+  non_billable_minutes,
+  notes,
+  projectId,
+}: {
+  date: Date;
+  phaseName: string;
+  billable_hours: number;
+  billable_minutes: number;
+  non_billable_hours: number;
+  non_billable_minutes: number;
+  notes: string;
+  projectId: string;
+}): Promise<AxiosResponse> => {
+  console.log({
+    date,
+    phaseName,
+    billable_hours,
+    billable_minutes,
+    non_billable_hours,
+    non_billable_minutes,
+    notes,
+    projectId,
+  });
+
   return new Promise<AxiosResponse>((resolve) =>
     resolve({
       data: {
         date,
-        hours,
-        minutes,
+        phaseName,
+        billable_hours,
+        billable_minutes,
+        non_billable_hours,
+        non_billable_minutes,
         notes,
-        phase,
-        id,
+        projectId,
       },
       status: 201,
       statusText: "OK",

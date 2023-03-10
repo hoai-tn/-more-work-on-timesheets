@@ -476,6 +476,8 @@ export const TimesheetsPage = ({
         const row = timesheets.find((e) => e.id === id);
 
         if (row && row.Project) {
+          const phaseByHierarchy = row?.hierarchy[2] || "";
+          const clientByHierarchy = row?.hierarchy[0] || "";
           const entryDate = datesByDay[field];
           const hoursWorked = Math.trunc(newHours);
           const timeEntry = (row[field as keyof ITimesheet] as ITimeEntry) || {
@@ -492,34 +494,52 @@ export const TimesheetsPage = ({
             hoursWorked > 0 ? 60 * (newHours - hoursWorked) : 0;
 
           //Saves the updated data to the API
-          await apiTransport.cupola.timesheet.post(
-            entryDate.toJSDate(),
-            timeEntry.hours,
-            timeEntry.minutes,
-            row.Project.id,
-            timeEntry.notes,
-            row.PhaseName
-          );
 
+          // if type is `Billable`, get `Non-billable`
+          const findDiffRow = timesheets.find(
+            (timesheet) =>
+              timesheet.hierarchy[1] === row.hierarchy[1] && // condition project name
+              timesheet.hierarchy[2] === row.hierarchy[2] && /// condition phase
+              timesheet.PhaseName ===
+                (row.Type === TypeRow.Billable ? "Non-billable" : "Billable")
+          );
+          if (findDiffRow) {
+            const diffEntry = findDiffRow[
+              field as keyof ITimesheet
+            ] as ITimeEntry;
+            await apiTransport.cupola.timesheet.post({
+              date: entryDate.toJSDate(),
+              phaseName: phaseByHierarchy,
+              billable_hours:
+                row.Type === TypeRow.Billable
+                  ? timeEntry.hours
+                  : diffEntry?.hours || 0,
+              billable_minutes:
+                row.Type === TypeRow.Billable
+                  ? timeEntry.minutes
+                  : diffEntry?.minutes || 0,
+              non_billable_hours:
+                row.Type === TypeRow.NoneBillable
+                  ? timeEntry.hours
+                  : diffEntry?.hours || 0,
+              non_billable_minutes:
+                row.Type === TypeRow.NoneBillable
+                  ? timeEntry.minutes
+                  : diffEntry?.minutes || 0,
+              notes: timeEntry.notes,
+              projectId: findDiffRow?.PhaseName,
+            });
+          }
           // Update timesheets with new data
-          const phaseByHierarchy = row?.hierarchy[2] || "";
-          const clientByHierarchy = row?.hierarchy[0] || "";
           setTimesheets(
             timesheets.map((item) => {
               const entry = {
                 ...(item[field as keyof ITimesheet] as ITimeEntry),
               };
-              // Update total hours and hours for matching phase or "Total # Hours"
-              // if (
-              //   item.Type === TypeRow.Project ||
-              //   item.Type === TypeRow.Total ||
-              //   (item.Type === TypeRow.Client &&
-              //     item.hierarchy[0] === clientByHierarchy)
-              // ) 
               if (
                 item.PhaseName === row.Project?.name ||
-                item.PhaseName === "Total # Hours" ||
-                (item.hierarchy.length === 1 &&
+                item.Type === TypeRow.Total ||
+                (item.Type === TypeRow.Client &&
                   item.hierarchy[0] === clientByHierarchy)
               ) {
                 return {
@@ -528,7 +548,6 @@ export const TimesheetsPage = ({
                   TotalHours: item.TotalHours + sumHours,
                 };
               }
-
               // Update total hours and hours for matching id
               if (item.id === id) {
                 return {
@@ -666,6 +685,7 @@ export const TimesheetsPage = ({
         );
       });
       if (findTimesheet) {
+        console.log({ findTimesheet });
         const entryByDay = findTimesheet[
           dayName as keyof ITimesheet
         ] as ITimeEntry;
