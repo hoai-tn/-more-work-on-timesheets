@@ -20,6 +20,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { TimesheetHoursWorked } from "../timesheet-hours-worked/timesheet-hours-worked";
 import { TimesheetNoteDialog } from "../timesheet-note-dialog/timesheet-note-dialog";
+import { v4 as UUIDv4 } from "uuid";
 
 import {
   ITimeEntry,
@@ -70,7 +71,15 @@ import {
 import CupolaThemeProvider from "../../cupola-theme-provider/cupola-theme-provider";
 import { projectIsActiveWithPhases } from "../../pages/all-projects-page/all-projects-page";
 import { Dayjs } from "dayjs";
-import { filterTimesheet, shouldDisableDate } from "./timesheet-page.functions";
+import {
+  filterTimesheet,
+  shouldDisableDate,
+  handleUpdateTimesheetForEditEntry,
+  renderRow,
+  handleDataToRenderClient,
+  handleDataToRenderTotalRow,
+  handlePhaseAndChildOfPhaseToRender,
+} from "./timesheet-page.functions";
 
 const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -232,7 +241,6 @@ export const TimesheetsPage = ({
 
       const formatDataForGridData: ITimesheet[] = [];
 
-      let rowID = 1;
       clients.forEach((client: ClientEntity) => {
         // Loop through each projects from API transport
         projects.forEach((project, indexProject) => {
@@ -271,175 +279,64 @@ export const TimesheetsPage = ({
             });
             formatDataForGridData.push(
               renderRow({
-                id: rowID,
+                id: UUIDv4(),
                 phaseName: project.name,
                 hoursByDay: totalHoursByDay,
                 totalHours: totalHours(totalHoursByDay),
                 type: TypeRow.Project,
                 project,
                 clientName: client.name,
+                client,
               })
             );
 
-            rowID++;
-
             //2. Handle `phases` and Add phase row to `formatDataForGridData`
             phases?.forEach((phase) => {
-              const phaseByDay: { [index: string]: ITimeEntry } = {};
-              const billableByDay: { [index: string]: ITimeEntry } = {};
-              const noneBillableByDay: { [index: string]: ITimeEntry } = {};
-
               const timeEntryByPhase = timeEntries.filter(
                 (timeEntry: TimesheetEntryEntity) => timeEntry.phase === phase
               );
 
-              timeEntryByPhase.forEach((item: TimesheetEntryEntity) => {
-                phaseByDay[DateTime.fromISO(item.date.toString()).weekdayLong] =
-                  {
-                    date: item.date.toString(),
-                    notes: item.notes,
-                    hours:
-                      item.billable_hours +
-                      item.billable_minutes / 60 +
-                      (item.non_billable_hours +
-                        item.non_billable_minutes / 60),
-                    minutes: 0,
-                  };
-              });
-              // render phase
               formatDataForGridData.push(
-                renderRow({
-                  id: rowID,
-                  phaseName: phase as string,
-                  hoursByDay: phaseByDay,
-                  totalHours: totalHours(phaseByDay),
-                  type: TypeRow.Phase,
+                handlePhaseAndChildOfPhaseToRender(
+                  timeEntryByPhase,
+                  client,
                   project,
-                  clientName: client.name,
-                })
+                  phase,
+                  TypeRow.Phase
+                )
               );
-              rowID++;
               // handle to render billable
-              timeEntryByPhase.forEach((item: TimesheetEntryEntity) => {
-                billableByDay[
-                  DateTime.fromISO(item.date.toString()).weekdayLong
-                ] = {
-                  date: item.date.toString(),
-                  notes: item.notes,
-                  hours: item.billable_hours + item.billable_minutes / 60,
-                  minutes: 0,
-                };
-              });
-
               formatDataForGridData.push(
-                renderRow({
-                  id: rowID,
-                  phaseName: phase,
-                  billableName: "Billable",
-                  hoursByDay: billableByDay,
-                  totalHours: totalHours(billableByDay),
-                  type: TypeRow.Billable,
+                handlePhaseAndChildOfPhaseToRender(
+                  timeEntryByPhase,
+                  client,
                   project,
-                  clientName: client.name,
-                })
+                  phase,
+                  TypeRow.Billable
+                )
               );
-              rowID++;
               // handle to render Non-billable
-              timeEntryByPhase.forEach((item: TimesheetEntryEntity) => {
-                noneBillableByDay[
-                  DateTime.fromISO(item.date.toString()).weekdayLong
-                ] = {
-                  date: item.date.toString(),
-                  notes: item.notes,
-                  hours:
-                    item.non_billable_hours + item.non_billable_minutes / 60,
-                  minutes: 0,
-                };
-              });
               formatDataForGridData.push(
-                renderRow({
-                  id: rowID,
-                  phaseName: phase,
-                  billableName: "Non-billable",
-                  hoursByDay: noneBillableByDay,
-                  totalHours: totalHours(noneBillableByDay),
-                  type: TypeRow.NoneBillable,
+                handlePhaseAndChildOfPhaseToRender(
+                  timeEntryByPhase,
+                  client,
                   project,
-                  clientName: client.name,
-                })
+                  phase,
+                  TypeRow.NoneBillable
+                )
               );
-              rowID++;
             });
           }
         });
-        //3. Total Client worked hours
-        const totalHoursByProject: { [index: string]: ITimeEntry } = {};
-        let totalAllOfProject = 0;
-        days.forEach((day, index) => {
-          let totalHours = 0;
-          formatDataForGridData.forEach((item) => {
-            if (
-              item.Project?.clientId === client.id &&
-              item.Type === TypeRow.Project
-            )
-              totalHours += Number(
-                // total hours by project
-                (item[day as keyof ITimesheet] as ITimeEntry).hours
-              );
-          });
-          totalHoursByProject[day] = {
-            date: "",
-            hours: totalHours,
-            minutes: 0,
-            notes: "",
-          };
-          totalAllOfProject += totalHours;
-        });
-
+        // Total Client worked hours
         formatDataForGridData.push(
-          renderRow({
-            id: rowID,
-            phaseName: "Total # Hours",
-            hoursByDay: totalHoursByProject,
-            totalHours: totalAllOfProject,
-            type: TypeRow.Client,
-            clientName: client.name,
-          })
+          handleDataToRenderClient(formatDataForGridData, client)
         );
-        rowID++;
       });
-      //4. total clients hours
-      const totalHoursByClient: { [index: string]: ITimeEntry } = {};
-      let totalAllOfClients = 0;
-      days.forEach((day, index) => {
-        let totalHours = 0;
-        formatDataForGridData.forEach((item) => {
-          if (item.Type === TypeRow.Client) {
-            totalHours += Number(
-              // total hours by project
-              (item[day as keyof ITimesheet] as ITimeEntry).hours
-            );
-          }
-        });
-        totalHoursByClient[day] = {
-          date: "",
-          hours: totalHours,
-          minutes: 0,
-          notes: "",
-        };
-        totalAllOfClients += totalHours;
-      });
-
+      // total clients hours
       formatDataForGridData.push(
-        renderRow({
-          id: rowID,
-          phaseName: "Total # Hours",
-          hoursByDay: totalHoursByClient,
-          totalHours: totalAllOfClients,
-          type: TypeRow.Total,
-        })
+        handleDataToRenderTotalRow(formatDataForGridData)
       );
-      rowID++;
       setTimesheets(formatDataForGridData);
     };
     handleTimesheets().catch(console.error);
@@ -477,7 +374,6 @@ export const TimesheetsPage = ({
 
         if (row && row.Project) {
           const phaseByHierarchy = row?.hierarchy[2] || "";
-          const clientByHierarchy = row?.hierarchy[0] || "";
           const entryDate = datesByDay[field];
           const hoursWorked = Math.trunc(newHours);
           const timeEntry = (row[field as keyof ITimesheet] as ITimeEntry) || {
@@ -496,15 +392,15 @@ export const TimesheetsPage = ({
           //Saves the updated data to the API
 
           // if type is `Billable`, get `Non-billable`
-          const findDiffRow = timesheets.find(
+          const findRemainingRow = timesheets.find(
             (timesheet) =>
               timesheet.hierarchy[1] === row.hierarchy[1] && // condition project name
               timesheet.hierarchy[2] === row.hierarchy[2] && /// condition phase
               timesheet.PhaseName ===
                 (row.Type === TypeRow.Billable ? "Non-billable" : "Billable")
           );
-          if (findDiffRow) {
-            const diffEntry = findDiffRow[
+          if (findRemainingRow) {
+            const remainingEntry = findRemainingRow[
               field as keyof ITimesheet
             ] as ITimeEntry;
             await apiTransport.cupola.timesheet.post({
@@ -513,70 +409,32 @@ export const TimesheetsPage = ({
               billable_hours:
                 row.Type === TypeRow.Billable
                   ? timeEntry.hours
-                  : diffEntry?.hours || 0,
+                  : remainingEntry?.hours || 0,
               billable_minutes:
                 row.Type === TypeRow.Billable
                   ? timeEntry.minutes
-                  : diffEntry?.minutes || 0,
+                  : remainingEntry?.minutes || 0,
               non_billable_hours:
                 row.Type === TypeRow.NoneBillable
                   ? timeEntry.hours
-                  : diffEntry?.hours || 0,
+                  : remainingEntry?.hours || 0,
               non_billable_minutes:
                 row.Type === TypeRow.NoneBillable
                   ? timeEntry.minutes
-                  : diffEntry?.minutes || 0,
+                  : remainingEntry?.minutes || 0,
               notes: timeEntry.notes,
-              projectId: findDiffRow?.PhaseName,
+              projectId: findRemainingRow?.PhaseName,
             });
           }
           // Update timesheets with new data
-          setTimesheets(
-            timesheets.map((item) => {
-              const entry = {
-                ...(item[field as keyof ITimesheet] as ITimeEntry),
-              };
-              if (
-                item.PhaseName === row.Project?.name ||
-                item.Type === TypeRow.Total ||
-                (item.Type === TypeRow.Client &&
-                  item.hierarchy[0] === clientByHierarchy)
-              ) {
-                return {
-                  ...item,
-                  [field]: { ...entry, hours: entry.hours + sumHours },
-                  TotalHours: item.TotalHours + sumHours,
-                };
-              }
-              // Update total hours and hours for matching id
-              if (item.id === id) {
-                return {
-                  ...item,
-                  [field]: {
-                    ...entry,
-                    hours: newHours,
-                  },
-                  TotalHours: row.TotalHours + sumHours,
-                };
-              }
-              // update parent phase of phase edit commit
-              if (
-                item.Project?.id === row.Project?.id &&
-                item.PhaseName === phaseByHierarchy
-              ) {
-                return {
-                  ...item,
-                  [field]: {
-                    ...entry,
-                    hours:
-                      (item[field as keyof ITimesheet] as ITimeEntry).hours +
-                      sumHours,
-                  },
-                  TotalHours: item.TotalHours + sumHours,
-                };
-              }
-              return item;
-            })
+          setTimesheets((prevState) =>
+            handleUpdateTimesheetForEditEntry(
+              prevState,
+              field,
+              row,
+              newHours,
+              sumHours
+            )
           );
         }
       }
@@ -593,71 +451,13 @@ export const TimesheetsPage = ({
           .reduce((a, b) => a + b, 0)) as number) || 0
     );
   };
-  const renderRow = (row: {
-    id: number;
-    phaseName: string;
-    hoursByDay: { [index: string]: ITimeEntry };
-    totalHours: number;
-    type: TypeRow;
-    project?: ProjectEntity | null;
-    clientName?: string;
-    billableName?: string;
-  }) => {
-    const {
-      id,
-      phaseName,
-      hoursByDay,
-      totalHours,
-      type,
-      project,
-      clientName,
-      billableName,
-    } = row;
-    let hierarchy;
-    let phase = "";
-    switch (type) {
-      case TypeRow.Client:
-        phase = clientName || "";
-        hierarchy = [clientName];
-        break;
-      case TypeRow.Project:
-        phase = phaseName;
-        hierarchy = [clientName, project?.name];
-        break;
-      case TypeRow.Billable:
-      case TypeRow.NoneBillable:
-        phase = billableName || "";
-        hierarchy = [clientName, project?.name, phaseName, billableName];
-        break;
-      case TypeRow.Total:
-        phase = phaseName;
-        hierarchy = [phaseName];
-        break;
-      default:
-        phase = phaseName;
-        hierarchy = [clientName, project?.name, phaseName];
-    }
-    return {
-      id,
-      hierarchy,
-      PhaseName: phase,
-      Monday: hoursByDay["Monday"],
-      Tuesday: hoursByDay["Tuesday"],
-      Wednesday: hoursByDay["Wednesday"],
-      Thursday: hoursByDay["Thursday"],
-      Friday: hoursByDay["Friday"],
-      Saturday: hoursByDay["Saturday"],
-      Sunday: hoursByDay["Sunday"],
-      TotalHours: totalHours,
-      Type: type,
-      Project: project,
-      IsDisable: false,
-    } as ITimesheet;
-  };
+
   // update onChangeData to testing
   useEffect(() => {
     timesheets.length > 1 &&
-      onChangeTimesheetEntries(JSON.stringify(timesheets));
+      onChangeTimesheetEntries(
+        JSON.stringify(timesheets.map((e, index) => ({ ...e, id: index }))) // add id to test
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timesheets]);
 
@@ -678,48 +478,58 @@ export const TimesheetsPage = ({
     // console.log(date.toString(), project, notes, phase);
     try {
       const dayName = getDayName(date.toString());
-      const findTimesheet = timesheets.find((e) => {
+      const getBillablePhase = timesheets.find((e) => {
         return (
-          e.PhaseName.toLowerCase() === phase.toLowerCase() &&
-          e.Project?.id === project
+          e.hierarchy[2]?.toLowerCase() === phase.toLowerCase() &&
+          e.Project?.id === project &&
+          e.Type === TypeRow.Billable
         );
       });
-      if (findTimesheet) {
-        console.log({ findTimesheet });
-        const entryByDay = findTimesheet[
-          dayName as keyof ITimesheet
-        ] as ITimeEntry;
+      const getNonBillablePhase = timesheets.find((e) => {
+        return (
+          e.hierarchy[2]?.toLowerCase() === phase.toLowerCase() &&
+          e.Project?.id === project &&
+          e.Type === TypeRow.NoneBillable
+        );
+      });
+      console.log({ getBillablePhase, getNonBillablePhase });
 
-        // update notes API
-        const response: { data: Partial<TimesheetEntryEntity> } =
-          await apiTransport.cupola.timesheet.post(
-            new Date(String(entryByDay.date)),
-            entryByDay.hours,
-            entryByDay.minutes,
-            project,
-            notes,
-            phase
-          );
-        // update timesheets state from update notes api
-        setTimesheets((prevState) => {
-          return prevState.map((row) => {
-            if (row.PhaseName === phase && row.Project?.id === project) {
-              return {
-                ...row,
-                [dayName]: {
-                  date: DateTime.fromJSDate(
-                    new Date(String(response.data.date))
-                  ).toFormat("yyyy-MM-dd"),
-                  hours: response.data.hours,
-                  minutes: response.data.minutes,
-                  notes: response.data.notes,
-                },
-              };
-            }
-            return row;
-          });
-        });
-      }
+      // if (findTimesheet) {
+      //   console.log({ findTimesheet });
+      //   const entryByDay = findTimesheet[
+      //     dayName as keyof ITimesheet
+      //   ] as ITimeEntry;
+
+      //   // update notes API
+      //   const response: { data: Partial<TimesheetEntryEntity> } =
+      //     await apiTransport.cupola.timesheet.post(
+      //       new Date(String(entryByDay.date)),
+      //       entryByDay.hours,
+      //       entryByDay.minutes,
+      //       project,
+      //       notes,
+      //       phase
+      //     );
+      //   // update timesheets state from update notes api
+      //   setTimesheets((prevState) => {
+      //     return prevState.map((row) => {
+      //       if (row.PhaseName === phase && row.Project?.id === project) {
+      //         return {
+      //           ...row,
+      //           [dayName]: {
+      //             date: DateTime.fromJSDate(
+      //               new Date(String(response.data.date))
+      //             ).toFormat("yyyy-MM-dd"),
+      //             hours: response.data.hours,
+      //             minutes: response.data.minutes,
+      //             notes: response.data.notes,
+      //           },
+      //         };
+      //       }
+      //       return row;
+      //     });
+      //   });
+      // }
     } catch (error) {
       console.log(error);
     }

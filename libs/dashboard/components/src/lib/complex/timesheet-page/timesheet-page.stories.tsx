@@ -13,7 +13,6 @@ const Template: ComponentStory<typeof TimesheetsPage> = (args) => {
     <div>
       <TimesheetsPage
         onChangeTimesheetEntries={(e) => setTestInputField(e)}
-        {...args}
       />
       <textarea
         id="timesheets-page-test-data"

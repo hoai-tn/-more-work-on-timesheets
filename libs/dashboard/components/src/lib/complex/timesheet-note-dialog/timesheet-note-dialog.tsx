@@ -164,7 +164,7 @@ export const TimesheetNoteDialog = ({
                 handleChangeInput("project", String(id));
 
                 const phases = projectPhasesMap?.get(id) || [];
-                console.log({phases});
+                // console.log({phases});
                 
                 await setProjectPhases(phases);
               }}
@@ -189,8 +189,7 @@ export const TimesheetNoteDialog = ({
               data-testid={"select-phase"}
               options={projectPhases.map(
                 (template: DerivedProjectFeeTemplate) => {
-                  console.log({template});
-                  
+                  // console.log({template});
                   return template.phase
                 }
               )}

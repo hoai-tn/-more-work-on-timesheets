@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { ProjectEntity } from "@cupola/types";
+import { ClientEntity, ProjectEntity } from "@cupola/types";
 
 declare module "react" {}
 
@@ -123,7 +123,7 @@ export enum TypeRow {
 }
 
 export interface ITimesheet {
-  id: number;
+  id: string;
   PhaseName: string;
   TotalHours: number;
   Monday: ITimeEntry;
@@ -135,6 +135,7 @@ export interface ITimesheet {
   Sunday: ITimeEntry;
   Type: TypeRow;
   Project?: ProjectEntity;
+  Client?: ClientEntity;
   IsDisable: boolean;
   hierarchy: string[];
 }
